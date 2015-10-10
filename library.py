@@ -7,6 +7,7 @@ access. Applications must identify the necessary exclusion constraints.
 
 import hashlib
 import functools
+import collections
 
 from ..computation import libhash
 from ..routes import library as routeslib
@@ -17,31 +18,45 @@ class Hash(object):
 	The divided hash is used to construct the route to the actual data file
 	and the index of the bucket.
 
-	Depends on &hashlib for implementation resolution.
+	Depends on Python's &hashlib for implementation resolution.
 	"""
+
+	@staticmethod
+	def divide(digest, length, edge, step):
+		"Split the hex digest into parts for building a Route to the bucket."
+		return [
+			digest[x:y]
+			for x, y in zip(
+				range(0, length, step),
+				range(step, edge, step)
+			)
+		]
 
 	def __call__(self, key):
 		"Hash the given key with the configured algorithm returning the divided digest."
 
 		hi = self.implementation(key)
-
 		digest = hi.hexdigest().lower()
-		return [
-			digest[x:y]
-			for x, y in zip(
-				range(0, self.length, self.step),
-				range(self.step, self.length+self.step, self.step)
-			)
-		]
 
-	# XXX: need fast consistent hash here, not crypto hash
-	# A crypto hash may be appropriate for file metadata, but not for keys.
-	def __init__(self, algorithm='sha256', depth=4):
+		return self.divide(digest, self.length, self.edge, self.step)
+
+	def __init__(self, algorithm='fnv64a', depth=2, length=None):
 		self.algorithm = algorithm
 		self.depth = depth
-		self.implementation = hashlib.__dict__[algorithm]
-		self.length = len(self.implementation(b'').hexdigest())
+
+		try:
+			self.implementation = libhash.reference(algorithm)
+		except ImportError:
+			self.implementation = hashlib.__dict__[algorithm]
+
+		# calculate if not specified.
+		if length is None:
+			self.length = len(self.implementation(b'').hexdigest())
+		else:
+			self.length = length
+
 		self.step = self.length // self.depth
+		self.edge = self.length + self.step
 
 class Index(object):
 	"""
@@ -158,7 +173,7 @@ class Index(object):
 		entry = self._map.pop(key)
 		return entry
 
-class Dictionary(object):
+class Dictionary(collections.Mapping):
 	"""
 	Filesystem based dictionary for large values.
 
@@ -249,6 +264,15 @@ class Dictionary(object):
 
 	__contains__ = has_key
 
+	def __len__(self):
+		return NotImplemented
+
+	def __iter__(self):
+		return NotImplemented
+
+	def __hash__(self):
+		return id(self)
+
 	@functools.lru_cache(32)
 	def _index(self, route):
 		idx = Index()
@@ -304,6 +328,7 @@ class Dictionary(object):
 		if not ir.exists():
 			ir.init('file')
 
+		# update the index
 		idx = self._index(ir)
 
 		entry = idx.allocate((key,))[0]
@@ -311,6 +336,17 @@ class Dictionary(object):
 			idx.store(f.write)
 
 		return r / entry
+
+	def subdictionary(self, key, addressing = None):
+		"""
+		Create or open a &Dictionary instance at the given key.
+		"""
+
+		r = self.route(key)
+		if not r.exists():
+			r.init("directory")
+
+		return self.__class__(addressing or self.addressing, r)
 
 	def __setitem__(self, key, value):
 		"Store the given data, &value, using the &key."
@@ -370,8 +406,9 @@ class Dictionary(object):
 		"""
 		Not Implemented.
 
-		Merge the &source Dictionary into the &self.
-
-		The hash configuration must be identical.
+		Merge the &source Dictionary into the hash managed by &self.
+		Merge is fundamental to implementing transactions: A separate hash directory
+		is created to represent a transaction and all writes are made to that
+		temporary directory.
 		"""
 		raise NotImplementedError("merge")

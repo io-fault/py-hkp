@@ -40,7 +40,7 @@ class Hash(object):
 
 		return self.divide(digest, self.length, self.edge, self.step)
 
-	def __init__(self, algorithm='fnv64a', depth=2, length=None):
+	def __init__(self, algorithm='fnv1a_64', depth=2, length=None):
 		self.algorithm = algorithm
 		self.depth = depth
 

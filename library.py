@@ -231,7 +231,7 @@ class Dictionary(collections.Mapping):
 			config = f.read()
 
 		algorithm, divisions = config.strip().split() # expecting two fields
-		addressing = Hash(algorithm, depth=divisions)
+		addressing = Hash(algorithm, depth=int(divisions))
 
 		return Class(addressing, r)
 

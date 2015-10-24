@@ -300,8 +300,8 @@ class Dictionary(collections.Mapping):
 		Usage:
 
 			fsd.allocate([(b'/file-1', b'/file-2')])
-			{b'/file-1': fault.routes.library.File(),
-			 b'/file-2': fault.routes.library.File()}
+			{b'/file-1': fault.routes.library.File(...),
+			 b'/file-2': fault.routes.library.File(...)}
 
 		The routes are fully initialized; entries exist in the index,
 		and the route points to an initialized file.
@@ -340,6 +340,9 @@ class Dictionary(collections.Mapping):
 	def subdictionary(self, key, addressing = None):
 		"""
 		Create or open a &Dictionary instance at the given key.
+
+		The addressing (hash and depth) of the subdictionary is
+		consistent with the container's.
 		"""
 
 		r = self.route(key)

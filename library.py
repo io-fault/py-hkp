@@ -125,16 +125,21 @@ class Index(object):
 		self._state = list(i)
 		self._map = dict([(k, v.decode('utf-8')) for k, v in self._state])
 
-	def store(self, write,
+	def store(self, write:collections.Callable,
 			indent = lambda x: b''.join((b'\t', b'\n\t'.join(x.split(b'\n')), b'\n'))
 		):
 		"""
-		Send the serialized index state to the write function.
+		Send the serialized index state to the given &write function.
 		"""
 
 		entries = b''.join((v.encode('utf-8')+b'\n'+indent(k)) for (k, v) in self._map.items())
 		write(str(self.counter).encode('utf-8') + b'\n')
 		write(entries)
+
+	def keys(self):
+		"Iterator containing the keys loaded from the index."
+
+		return self._map.keys()
 
 	def has_key(self, key):
 		"Check if a key exists in the index."
@@ -201,7 +206,7 @@ class Dictionary(collections.Mapping):
 			f.write("%s %s\n" %(a.algorithm, a.depth))
 
 	@classmethod
-	def create(Class, addressing, directory):
+	def create(Class, addressing:Hash, directory:str):
 		"""
 		Create the Dictionary directory and initialize its configuration.
 
@@ -218,7 +223,7 @@ class Dictionary(collections.Mapping):
 		return Class(a, r)
 
 	@classmethod
-	def open(Class, directory):
+	def open(Class, directory:str):
 		"""
 		Open a filesystem based dictionary at the given directory.
 
@@ -235,9 +240,29 @@ class Dictionary(collections.Mapping):
 
 		return Class(addressing, r)
 
-	def __init__(self, addressing, directory):
+	def __init__(self, addressing:Hash, directory:routeslib.File):
 		self.addressing = addressing
 		self.directory = directory
+
+	def keys(self) -> [bytes]:
+		"""
+		Returns an iterator to all the keys contained in the &Dictionary.
+		The implementation is indifferent to depth and walks the tree looking
+		for index files in order to extract the keys.
+		"""
+
+		q = [self.directory]
+		while q:
+			fsdir = q.pop(0)
+
+			for dirs in fsdir.subnodes()[0]:
+				for x in dirs:
+					idx_path = x / 'index'
+					if idx_path.exists():
+						yield from self._index(idx_path).keys()
+					else:
+						# container, descend.
+						q.append(x)
 
 	def has_key(self, key):
 		"""

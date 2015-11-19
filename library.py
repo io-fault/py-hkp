@@ -186,15 +186,18 @@ class Dictionary(collections.Mapping):
 	The mapping interface may be used, but it will not be [memory] efficient for larger
 	files.
 
+	The dictionary interface is provided for convenience and testing.
+	The &allocate method is the primary interface as &Dictionary objects
+	are intended for file storage; large binary objects.
+
+	[Attributes]
+
 	/addressing
 		The address resolution method. Usually a &Hash instance.
 
 	/directory
-		The route to the directory that the address exists within.
-
-	The dictionary interface is provided for convenience and testing.
-	The &allocate method is the primary interface as &Dictionary objects
-	are intended for file storage; large binary objects.
+		The &routeslib.File instance selecting the directory that the addresses
+		exists within.
 	"""
 
 	@staticmethod
@@ -209,6 +212,8 @@ class Dictionary(collections.Mapping):
 	def create(Class, addressing:Hash, directory:str):
 		"""
 		Create the Dictionary directory and initialize its configuration.
+
+		[Parameters]
 
 		/addressing
 			A &Hash instance describing the to use.
@@ -226,6 +231,8 @@ class Dictionary(collections.Mapping):
 	def open(Class, directory:str):
 		"""
 		Open a filesystem based dictionary at the given directory.
+
+		[Parameters]
 
 		/directory
 			An absolute path to the storage location.
@@ -322,7 +329,7 @@ class Dictionary(collections.Mapping):
 		"""
 		Allocate a set of keys and return a mapping of their corresponding entries.
 
-		Usage:
+		#!/pl/python
 
 			fsd.allocate([(b'/file-1', b'/file-2')])
 			{b'/file-1': fault.routes.library.File(...),

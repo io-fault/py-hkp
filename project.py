@@ -1,17 +1,3 @@
-"""
-[ Structure ]
-
-The structure of the project. Prevalent high-level concepts.
-Where such concepts are manifested.
-
-[ Requirements ]
-
-Any hidden dependencies or notes about dependencies.
-
-[ Defense ]
-
-No general, isolated solution available.
-"""
 abstract = 'storage abstractions for event streams and sub-filesystems'
 
 #: Project name.

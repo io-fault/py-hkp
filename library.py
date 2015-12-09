@@ -141,6 +141,9 @@ class Index(object):
 
 		return self._map.keys()
 
+	def items(self):
+		return self._map.items()
+
 	def has_key(self, key):
 		"Check if a key exists in the index."
 
@@ -264,11 +267,46 @@ class Dictionary(collections.Mapping):
 
 			for dirs in fsdir.subnodes()[0]:
 				for x in dirs:
+					#print(x.points)
 					idx_path = x / 'index'
 					if idx_path.exists():
 						yield from self._index(idx_path).keys()
 					else:
-						# container, descend.
+						# container, descend if &x/index does not exist.
+						q.append(x)
+
+	def values(self) -> [bytes]:
+		"""
+		Return an iterator to the file contents of each key.
+
+		! NOTE:
+			This method is intentionally left inefficient as it is
+			unlikely to receive direct use. Its use is likely reasonable in
+			cases of many small files, which is not an intended use
+			case of &Dictionary.
+		"""
+		yield from (self[k] for k in self.keys())
+
+	def references(self) -> [(bytes, routeslib.File)]:
+		"""
+		Returns an iterator to all the keys and their associated routes.
+		"""
+
+		q = [self.directory]
+		while q:
+			fsdir = q.pop(0)
+
+			for dirs in fsdir.subnodes()[0]:
+				for x in dirs:
+					#print(x.points)
+					idx_path = x / 'index'
+					if idx_path.exists():
+						yield from (
+							(k, (x / v))
+							for k, v in self._index(idx_path).items()
+						)
+					else:
+						# container, descend if &x/index does not exist.
 						q.append(x)
 
 	def has_key(self, key):

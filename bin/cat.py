@@ -22,4 +22,7 @@ def main(output, args, readsize=1024*4):
 
 if __name__ == '__main__':
 	import sys
-	main(sys.stdout.buffer, sys.argv[1:])
+	try:
+		main(sys.stdout.buffer, sys.argv[1:])
+	finally:
+		sys.stdout.close()

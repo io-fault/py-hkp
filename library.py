@@ -10,7 +10,7 @@ import functools
 import collections
 
 from ..computation import libhash
-from ..routes import library as routeslib
+from ..routes import library as libroutes
 
 class Hash(object):
 	"""
@@ -199,7 +199,7 @@ class Dictionary(collections.Mapping):
 		The address resolution method. Usually a &Hash instance.
 
 	/directory
-		The &routeslib.File instance selecting the directory that the addresses
+		The &libroutes.File instance selecting the directory that the addresses
 		exists within.
 	"""
 
@@ -212,7 +212,7 @@ class Dictionary(collections.Mapping):
 			f.write("%s %s\n" %(a.algorithm, a.depth))
 
 	@classmethod
-	def create(Class, addressing:Hash, directory:str):
+	def create(Class, addressing:Hash, directory:str) -> "Dictionary":
 		"""
 		Create the Dictionary directory and initialize its configuration.
 
@@ -224,14 +224,14 @@ class Dictionary(collections.Mapping):
 			The absolute path to the storage location.
 		"""
 
-		r = routeslib.File.from_absolute(directory)
+		r = libroutes.File.from_absolute(directory)
 		a = addressing
 		Class._init(a, r)
 
 		return Class(a, r)
 
 	@classmethod
-	def open(Class, directory:str):
+	def open(Class, directory:str) -> "Dictionary":
 		"""
 		Open a filesystem based dictionary at the given directory.
 
@@ -241,16 +241,26 @@ class Dictionary(collections.Mapping):
 			An absolute path to the storage location.
 		"""
 
-		r = routeslib.File.from_absolute(directory)
+		r = libroutes.File.from_absolute(directory)
 		with (r / 'hash').open('r') as f: # open expects an existing 'hash' file.
 			config = f.read()
 
-		algorithm, divisions = config.strip().split() # expecting two fields
+		algorithm, divisions = config.strip().split(' ', 2) # expecting two fields
 		addressing = Hash(algorithm, depth=int(divisions))
 
 		return Class(addressing, r)
 
-	def __init__(self, addressing:Hash, directory:routeslib.File):
+	@classmethod
+	def use(Class, route:libroutes.File, addressing=None):
+		"""
+		Create or Open a filesystem &Dictionary at the given &route.
+		"""
+		if route.exists():
+			return Class.open(str(route))
+		else:
+			return Class.create(addressing or Hash('fnv1a_64'), str(route))
+
+	def __init__(self, addressing:Hash, directory:libroutes.File):
 		self.addressing = addressing
 		self.directory = directory
 
@@ -287,7 +297,7 @@ class Dictionary(collections.Mapping):
 		"""
 		yield from (self[k] for k in self.keys())
 
-	def references(self) -> [(bytes, routeslib.File)]:
+	def references(self) -> [(bytes, libroutes.File)]:
 		"""
 		Returns an iterator to all the keys and their associated routes.
 		"""

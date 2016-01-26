@@ -50,21 +50,21 @@ def test_Hash(test):
 	test/len(path) == h.depth
 
 def dictionary_operations(test, d):
-	foo = d[b'foo'] = b'bar'
-	bar = d[b'bar'] = b'SDLKVNSDVLKSDNVDSVLDVKNSDLVNKasdvdsv'
+	key = d[b'key'] = b'value'
+	key2 = d[b'key2'] = b'SDLKVNSDVLKSDNVDSVLDVKNSDLVNKasdvdsv'
 
-	test/d[b'foo'] == foo
-	test/d[b'bar'] == bar
+	test/d[b'key'] == key
+	test/d[b'key2'] == key2
 
-	test/d.get(b'foo') == foo
+	test/d.get(b'key') == key
 	test/d.get(b'nosuchkey') == None
 
-	test/d.has_key(b'bleh') == False
-	test/d.has_key(b'foo') == True
-	test/d.has_key(b'bar') == True
+	test/d.has_key(b'no-such-key') == False
+	test/d.has_key(b'key') == True
+	test/d.has_key(b'key2') == True
 
 	d.clear()
-	test/d.has_key(b'foo') == False
+	test/d.has_key(b'key') == False
 	d[b'case'] = b'content'
 
 	r = d.route(b'case')
@@ -80,7 +80,7 @@ def dictionary_operations(test, d):
 	test/KeyError ^ (lambda: d.__delitem__(b'nosuchkey'))
 
 def test_Dictionary(test):
-	with library.routeslib.File.temporary() as tmp:
+	with library.libroutes.File.temporary() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 		fsd2 = (tmp / 'd2').fullpath
 
@@ -88,7 +88,7 @@ def test_Dictionary(test):
 		dictionary_operations(test, d)
 
 def test_Dictionary_subdictionary(test):
-	with library.routeslib.File.temporary() as tmp:
+	with library.libroutes.File.temporary() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 
 		d = library.Dictionary.create(library.Hash(), fsd1)
@@ -99,7 +99,7 @@ def test_Dictionary_subdictionary(test):
 		dictionary_operations(test, s2)
 
 def test_Dictionary_keys(test):
-	with library.routeslib.File.temporary() as tmp:
+	with library.libroutes.File.temporary() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 
 		d = library.Dictionary.create(library.Hash(), fsd1)

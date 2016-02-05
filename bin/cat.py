@@ -1,13 +1,13 @@
 """
 Cat a series of entries from a given hash directory.
 """
-from .. import library
-from ...routes import library as routeslib
+from .. import library as libfs
+from ...routes import library as libroutes
 
 def main(output, args, readsize=1024*4):
 	directory, *keys = args
-	directory = routeslib.File.from_path(directory).fullpath
-	d = library.Dictionary.open(directory)
+	directory = libroutes.File.from_path(directory).fullpath
+	d = libfs.Dictionary.open(directory)
 	write = output.write
 
 	for x in keys:

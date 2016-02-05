@@ -23,7 +23,9 @@ class Hash(object):
 
 	@staticmethod
 	def divide(digest, length, edge, step):
-		"Split the hex digest into parts for building a Route to the bucket."
+		"""
+		Split the hex digest into parts for building a Route to the bucket.
+		"""
 		return [
 			digest[x:y]
 			for x, y in zip(
@@ -33,7 +35,9 @@ class Hash(object):
 		]
 
 	def __call__(self, key):
-		"Hash the given key with the configured algorithm returning the divided digest."
+		"""
+		Hash the given key with the configured algorithm returning the divided digest.
+		"""
 
 		hi = self.implementation(key)
 		digest = hi.hexdigest().lower()
@@ -137,7 +141,9 @@ class Index(object):
 		write(entries)
 
 	def keys(self):
-		"Iterator containing the keys loaded from the index."
+		"""
+		Iterator containing the keys loaded from the index.
+		"""
 
 		return self._map.keys()
 
@@ -145,7 +151,9 @@ class Index(object):
 		return self._map.items()
 
 	def has_key(self, key):
-		"Check if a key exists in the index."
+		"""
+		Check if a key exists in the index.
+		"""
 
 		return key in self._map
 
@@ -156,7 +164,9 @@ class Index(object):
 		del self._map[key]
 
 	def allocate(self, keys):
-		"Allocate a sequence of entries for the given keys."
+		"""
+		Allocate a sequence of entries for the given keys.
+		"""
 
 		return [
 			self._map[k] if k in self._map else self.insert(k)
@@ -193,7 +203,7 @@ class Dictionary(collections.Mapping):
 	The &allocate method is the primary interface as &Dictionary objects
 	are intended for file storage; large binary objects.
 
-	[Attributes]
+	[Properties]
 
 	/addressing
 		The address resolution method. Usually a &Hash instance.
@@ -224,7 +234,7 @@ class Dictionary(collections.Mapping):
 			The absolute path to the storage location.
 		"""
 
-		r = libroutes.File.from_absolute(directory)
+		r = libroutes.File.from_path(directory)
 		a = addressing
 		Class._init(a, r)
 
@@ -241,7 +251,7 @@ class Dictionary(collections.Mapping):
 			An absolute path to the storage location.
 		"""
 
-		r = libroutes.File.from_absolute(directory)
+		r = libroutes.File.from_path(directory)
 		with (r / 'hash').open('r') as f: # open expects an existing 'hash' file.
 			config = f.read()
 
@@ -432,13 +442,17 @@ class Dictionary(collections.Mapping):
 		return self.__class__(addressing or self.addressing, r)
 
 	def __setitem__(self, key, value):
-		"Store the given data, &value, using the &key."
+		"""
+		Store the given data, &value, using the &key.
+		"""
 
 		with self.route(key).open('wb') as f:
 			f.write(value)
 
 	def __getitem__(self, key):
-		"Get the data stored using the give &key. &KeyError if it does not exist."
+		"""
+		Get the data stored using the give &key. &KeyError if it does not exist.
+		"""
 
 		if not self.has_key(key):
 			raise KeyError(key)
@@ -466,7 +480,9 @@ class Dictionary(collections.Mapping):
 		return value
 
 	def __delitem__(self, key):
-		"Delete the file associated with the key."
+		"""
+		Delete the file associated with the key.
+		"""
 
 		if self.has_key(key):
 			self.route(key).void()
@@ -474,7 +490,9 @@ class Dictionary(collections.Mapping):
 			raise KeyError(key)
 
 	def clear(self):
-		"Remove the entire directory and create a new one with the same configuration."
+		"""
+		Remove the entire directory and create a new one with the same configuration.
+		"""
 
 		self.directory.void()
 		self._init(self.addressing, self.directory)

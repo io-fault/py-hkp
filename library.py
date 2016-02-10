@@ -285,15 +285,14 @@ class Dictionary(collections.Mapping):
 		while q:
 			fsdir = q.pop(0)
 
-			for dirs in fsdir.subnodes()[0]:
-				for x in dirs:
-					#print(x.points)
-					idx_path = x / 'index'
-					if idx_path.exists():
-						yield from self._index(idx_path).keys()
-					else:
-						# container, descend if &x/index does not exist.
-						q.append(x)
+			nodes = fsdir.subnodes()
+			for x in nodes[0]:
+				idx_path = x / 'index'
+				if idx_path.exists():
+					yield from self._index(idx_path).keys()
+				else:
+					# container, descend if &x/index does not exist.
+					q.append(x)
 
 	def values(self) -> [bytes]:
 		"""
@@ -316,18 +315,17 @@ class Dictionary(collections.Mapping):
 		while q:
 			fsdir = q.pop(0)
 
-			for dirs in fsdir.subnodes()[0]:
-				for x in dirs:
-					#print(x.points)
-					idx_path = x / 'index'
-					if idx_path.exists():
-						yield from (
-							(k, (x / v))
-							for k, v in self._index(idx_path).items()
-						)
-					else:
-						# container, descend if &x/index does not exist.
-						q.append(x)
+			nodes = fsdir.subnodes()
+			for x in nodes[0]:
+				idx_path = x / 'index'
+				if idx_path.exists():
+					yield from (
+						(k, (x / v))
+						for k, v in self._index(idx_path).items()
+					)
+				else:
+					# container, descend if &x/index does not exist.
+					q.append(x)
 
 	def has_key(self, key):
 		"""

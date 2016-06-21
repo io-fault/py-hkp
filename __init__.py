@@ -11,5 +11,4 @@ Storage Abstractions:
 		Event stream segmentation for managing the archival process
 		of a window's past events. (Similar to log file rotation)
 """
-__pkg_bottom__ = True # Use this to detect the root package module of a project.
-__type__ = 'project'
+__factor_type__ = 'project'

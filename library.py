@@ -17,8 +17,6 @@ class Hash(object):
 	Hash algorithm manager providing access to the divided hash of a key.
 	The divided hash is used to construct the route to the actual data file
 	and the index of the bucket.
-
-	Depends on Python's &hashlib for implementation resolution.
 	"""
 
 	@staticmethod
@@ -45,6 +43,13 @@ class Hash(object):
 		return self.divide(digest, self.length, self.edge, self.step)
 
 	def __init__(self, algorithm='fnv1a_64', depth=2, length=None):
+		"""
+		Initialize a &Hash instance according to the parameters.
+
+		Essentially, a high-level &functools.partial constructor for performing
+		hashes on small keys and returning a tuple suitable for directory
+		names.
+		"""
 		self.algorithm = algorithm
 		self.depth = depth
 

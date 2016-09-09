@@ -168,23 +168,23 @@ class Index(object):
 	def __delitem__(self, key):
 		del self._map[key]
 
-	def allocate(self, keys):
+	def allocate(self, keys, filename):
 		"""
 		Allocate a sequence of entries for the given keys.
 		"""
 
 		return [
-			self._map[k] if k in self._map else self.insert(k)
+			self._map[k] if k in self._map
+			else self.insert(k, filename)
 			for k in keys
 		]
 
-	def insert(self, key):
+	def insert(self, key, filename):
 		"""
 		Insert the key into the bucket. The key *must* not already be present.
 		"""
-
 		self.counter = c = self.counter + 1
-		r = self._map[key] = str(c)
+		r = self._map[key] = filename(c)
 
 		return r
 
@@ -222,9 +222,9 @@ class Dictionary(collections.Mapping):
 	def _init(a, d):
 		# Initialize the directory and create the hash configuration file.
 		d.init('directory')
-
-		with (d / 'hash').open('w') as f:
-			f.write("%s %s\n" %(a.algorithm, a.depth))
+		h = d / 'hash'
+		data = "%s %s %s\n" %(a.algorithm, a.depth, a.length)
+		h.store(data.encode('ascii'))
 
 	@classmethod
 	def create(Class, addressing:Hash, directory:str) -> "Dictionary":
@@ -257,11 +257,14 @@ class Dictionary(collections.Mapping):
 		"""
 
 		r = libroutes.File.from_path(directory)
-		with (r / 'hash').open('r') as f: # open expects an existing 'hash' file.
-			config = f.read()
+		config = (r / 'hash').load().decode('ascii')
 
-		algorithm, divisions = config.strip().split(' ', 2) # expecting two fields
-		addressing = Hash(algorithm, depth=int(divisions))
+		algorithm, divisions, *length = config.strip().split(' ', 3) # expecting two fields
+		if not length or length[0] == 'None':
+			length = None
+		else:
+			length = int(length[0], 10)
+		addressing = Hash(algorithm, depth=int(divisions), length=length)
 
 		return Class(addressing, r)
 
@@ -386,7 +389,7 @@ class Dictionary(collections.Mapping):
 		with route.open('rb') as f:
 			idx.load(f.readlines())
 
-	def allocate(self, keys):
+	def allocate(self, keys, filename=str):
 		"""
 		Allocate a set of keys and return a mapping of their corresponding entries.
 
@@ -400,7 +403,7 @@ class Dictionary(collections.Mapping):
 		and the route points to an initialized file.
 		"""
 
-		return {k: self.route(key) for k in keys}
+		return {k: self.route(key, filename=filename) for k in keys}
 
 	def usage(self):
 		"""
@@ -409,7 +412,7 @@ class Dictionary(collections.Mapping):
 
 		return self.directory.usage()
 
-	def route(self, key):
+	def route(self, key, filename=str):
 		"""
 		Return the route to the file of the given key.
 		"""
@@ -424,7 +427,7 @@ class Dictionary(collections.Mapping):
 		# update the index
 		idx = self._index(ir)
 
-		entry = idx.allocate((key,))[0]
+		entry = idx.allocate((key,), filename=filename)[0]
 		with ir.open('wb') as f:
 			idx.store(f.write)
 

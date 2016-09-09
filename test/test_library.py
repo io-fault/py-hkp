@@ -24,10 +24,12 @@ def test_Index_structure(test):
 
 def test_Index(test):
 	idx = library.Index()
-	entries = idx.allocate((b'key1', b'key2'))
+
+	# Entry identifier increment.
+	entries = idx.allocate((b'key1', b'key2'), str)
 	test/entries == ["1", "2"]
 
-	# check serialization
+	# Check serialization
 	l = []
 	idx.store(l.append)
 	possibilities = [
@@ -41,6 +43,10 @@ def test_Index(test):
 	test/lidx.counter == 2
 	test/lidx._map << b'key1'
 	test/lidx._map << b'key2'
+
+	# Check for filename customization along with continuation after load.
+	entries = idx.allocate((b'key3',), lambda x: 'F.' + str(x) + '.exe')
+	test/entries == ['F.3.exe']
 
 def test_Hash(test):
 	h = library.Hash()

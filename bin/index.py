@@ -23,7 +23,7 @@ def main(output, args, str=str):
 				for k, r in d.references()
 			),
 			('dictionary', directory),
-			('xmlns', 'https://fault.io/xml/filesystem#index'),
+			('xmlns', 'http://fault.io/xml/filesystem#index'),
 		)
 		sep = b''
 	else:

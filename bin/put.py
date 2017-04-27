@@ -1,5 +1,5 @@
 """
-Put the data given to standard input into the filesystem dictionary.
+# Put the data given to standard input into the filesystem dictionary.
 """
 from .. import library
 from ...routes import library as routeslib

@@ -1,8 +1,8 @@
 """
-Storage abstractions for finite maps and permanent event streams.
+# Storage abstractions for finite maps and permanent event streams.
 
-The storage abstractions do not provide any guarantees for concurrent
-access. Applications must identify the necessary exclusion constraints.
+# The storage abstractions do not provide any guarantees for concurrent
+# access. Applications must identify the necessary exclusion constraints.
 """
 
 import hashlib
@@ -14,15 +14,15 @@ from ..routes import library as libroutes
 
 class Hash(object):
 	"""
-	Hash algorithm manager providing access to the divided hash of a key.
-	The divided hash is used to construct the route to the actual data file
-	and the index of the bucket.
+	# Hash algorithm manager providing access to the divided hash of a key.
+	# The divided hash is used to construct the route to the actual data file
+	# and the index of the bucket.
 	"""
 
 	@staticmethod
 	def divide(digest, length, edge, step):
 		"""
-		Split the hex digest into parts for building a Route to the bucket.
+		# Split the hex digest into parts for building a Route to the bucket.
 		"""
 		return [
 			digest[x:y]
@@ -34,7 +34,7 @@ class Hash(object):
 
 	def __call__(self, key):
 		"""
-		Hash the given key with the configured algorithm returning the divided digest.
+		# Hash the given key with the configured algorithm returning the divided digest.
 		"""
 
 		hi = self.implementation(key)
@@ -44,11 +44,11 @@ class Hash(object):
 
 	def __init__(self, algorithm='fnv1a_64', depth=2, length=None):
 		"""
-		Initialize a &Hash instance according to the parameters.
+		# Initialize a &Hash instance according to the parameters.
 
-		Essentially, a high-level &functools.partial constructor for performing
-		hashes on small keys and returning a tuple suitable for directory
-		names.
+		# Essentially, a high-level &functools.partial constructor for performing
+		# hashes on small keys and returning a tuple suitable for directory
+		# names.
 		"""
 		self.algorithm = algorithm
 		self.depth = depth
@@ -69,31 +69,31 @@ class Hash(object):
 
 class Index(object):
 	"""
-	A bucket index for the filesystem &Dictionary.
+	# A bucket index for the filesystem &Dictionary.
 
-	Manages the sequence of entries for a bucket.
+	# Manages the sequence of entries for a bucket.
 
-	The index files are a series of entry identifiers followed
-	by the key on a greater indentation level; the trailing newline
-	of each indentation block not being part of the key.
+	# The index files are a series of entry identifiers followed
+	# by the key on a greater indentation level; the trailing newline
+	# of each indentation block not being part of the key.
 	"""
 
 	@staticmethod
 	def structure(seq, iter=iter, next=next, tab=b'\t'[0]):
 		"""
-		Structure the indentation blocks into (key, entry) pairs.
-		The keys are the indented section and the entries are the leading
-		unindented identifier.
+		# Structure the indentation blocks into (key, entry) pairs.
+		# The keys are the indented section and the entries are the leading
+		# unindented identifier.
 
-		Trailing newlines *MUST* be present.
-		Structure presumes that the index file was loaded using readlines.
+		# Trailing newlines *MUST* be present.
+		# Structure presumes that the index file was loaded using readlines.
 
-		Entries (unindented areas) must be a single line followed by one
-		or more indented lines. The initial indentation level (first tab)
-		will be remove; the content will be considered to be the continuation
-		of the key (that's hashed to select this bucket's index).
+		# Entries (unindented areas) must be a single line followed by one
+		# or more indented lines. The initial indentation level (first tab)
+		# will be remove; the content will be considered to be the continuation
+		# of the key (that's hashed to select this bucket's index).
 
-		Underscore attributes are representations of stored data.
+		# Underscore attributes are representations of stored data.
 		"""
 
 		if seq:
@@ -119,8 +119,8 @@ class Index(object):
 
 	def load(self, lines):
 		"""
-		Load the index from the given line sequence.
-		&lines items *must* have trailing newlines.
+		# Load the index from the given line sequence.
+		# &lines items *must* have trailing newlines.
 		"""
 
 		i = iter(self.structure(lines))
@@ -138,7 +138,7 @@ class Index(object):
 			indent = lambda x: b''.join((b'\t', b'\n\t'.join(x.split(b'\n')), b'\n'))
 		):
 		"""
-		Send the serialized index state to the given &write function.
+		# Send the serialized index state to the given &write function.
 		"""
 
 		entries = b''.join((v.encode('utf-8')+b'\n'+indent(k)) for (k, v) in self._map.items())
@@ -147,7 +147,7 @@ class Index(object):
 
 	def keys(self):
 		"""
-		Iterator containing the keys loaded from the index.
+		# Iterator containing the keys loaded from the index.
 		"""
 
 		return self._map.keys()
@@ -157,7 +157,7 @@ class Index(object):
 
 	def has_key(self, key):
 		"""
-		Check if a key exists in the index.
+		# Check if a key exists in the index.
 		"""
 
 		return key in self._map
@@ -170,7 +170,7 @@ class Index(object):
 
 	def allocate(self, keys, filename):
 		"""
-		Allocate a sequence of entries for the given keys.
+		# Allocate a sequence of entries for the given keys.
 		"""
 
 		return [
@@ -181,7 +181,7 @@ class Index(object):
 
 	def insert(self, key, filename):
 		"""
-		Insert the key into the bucket. The key *must* not already be present.
+		# Insert the key into the bucket. The key *must* not already be present.
 		"""
 		self.counter = c = self.counter + 1
 		r = self._map[key] = filename(c)
@@ -190,7 +190,7 @@ class Index(object):
 
 	def delete(self, key):
 		"""
-		Delete the key from the index returning the entry for removal.
+		# Delete the key from the index returning the entry for removal.
 		"""
 
 		entry = self._map.pop(key)
@@ -198,24 +198,24 @@ class Index(object):
 
 class Dictionary(collections.Mapping):
 	"""
-	Filesystem based dictionary for large values.
+	# Filesystem based dictionary for large values.
 
-	Used to store files addressed by arbitrary keys.
-	The mapping interface may be used, but it will not be [memory] efficient for larger
-	files.
+	# Used to store files addressed by arbitrary keys.
+	# The mapping interface may be used, but it will not be [memory] efficient for larger
+	# files.
 
-	The dictionary interface is provided for convenience and testing.
-	The &allocate method is the primary interface as &Dictionary objects
-	are intended for file storage; large binary objects.
+	# The dictionary interface is provided for convenience and testing.
+	# The &allocate method is the primary interface as &Dictionary objects
+	# are intended for file storage; large binary objects.
 
-	[Properties]
+	# [Properties]
 
-	/addressing
-		The address resolution method. Usually a &Hash instance.
+	# /addressing
+		# The address resolution method. Usually a &Hash instance.
 
-	/directory
-		The &libroutes.File instance selecting the directory that the addresses
-		exists within.
+	# /directory
+		# The &libroutes.File instance selecting the directory that the addresses
+		# exists within.
 	"""
 
 	@staticmethod
@@ -229,14 +229,14 @@ class Dictionary(collections.Mapping):
 	@classmethod
 	def create(Class, addressing:Hash, directory:str) -> "Dictionary":
 		"""
-		Create the Dictionary directory and initialize its configuration.
+		# Create the Dictionary directory and initialize its configuration.
 
-		[Parameters]
+		# [Parameters]
 
-		/addressing
-			A &Hash instance describing the to use.
-		/directory
-			The absolute path to the storage location.
+		# /addressing
+			# A &Hash instance describing the to use.
+		# /directory
+			# The absolute path to the storage location.
 		"""
 
 		r = libroutes.File.from_path(directory)
@@ -248,12 +248,12 @@ class Dictionary(collections.Mapping):
 	@classmethod
 	def open(Class, directory:str) -> "Dictionary":
 		"""
-		Open a filesystem based dictionary at the given directory.
+		# Open a filesystem based dictionary at the given directory.
 
-		[Parameters]
+		# [Parameters]
 
-		/directory
-			An absolute path to the storage location.
+		# /directory
+			# An absolute path to the storage location.
 		"""
 
 		r = libroutes.File.from_path(directory)
@@ -271,7 +271,7 @@ class Dictionary(collections.Mapping):
 	@classmethod
 	def use(Class, route:libroutes.File, addressing=None):
 		"""
-		Create or Open a filesystem &Dictionary at the given &route.
+		# Create or Open a filesystem &Dictionary at the given &route.
 		"""
 		if route.exists():
 			return Class.open(str(route))
@@ -284,9 +284,9 @@ class Dictionary(collections.Mapping):
 
 	def keys(self) -> [bytes]:
 		"""
-		Returns an iterator to all the keys contained in the &Dictionary.
-		The implementation is indifferent to depth and walks the tree looking
-		for index files in order to extract the keys.
+		# Returns an iterator to all the keys contained in the &Dictionary.
+		# The implementation is indifferent to depth and walks the tree looking
+		# for index files in order to extract the keys.
 		"""
 
 		q = [self.directory]
@@ -304,19 +304,19 @@ class Dictionary(collections.Mapping):
 
 	def values(self) -> [bytes]:
 		"""
-		Return an iterator to the file contents of each key.
+		# Return an iterator to the file contents of each key.
 
-		! NOTE:
-			This method is intentionally left inefficient as it is
-			unlikely to receive direct use. Its use is likely reasonable in
-			cases of many small files, which is not an intended use
-			case of &Dictionary.
+		# ! NOTE:
+			# This method is intentionally left inefficient as it is
+			# unlikely to receive direct use. Its use is likely reasonable in
+			# cases of many small files, which is not an intended use
+			# case of &Dictionary.
 		"""
 		yield from (self[k] for k in self.keys())
 
 	def references(self) -> [(bytes, libroutes.File)]:
 		"""
-		Returns an iterator to all the keys and their associated routes.
+		# Returns an iterator to all the keys and their associated routes.
 		"""
 
 		q = [self.directory]
@@ -337,10 +337,10 @@ class Dictionary(collections.Mapping):
 
 	def has_key(self, key):
 		"""
-		Whether or not the &key is in the dictionary.
+		# Whether or not the &key is in the dictionary.
 
-		Notably, the entry file must exist on the file system
-		as well as the &key within the index.
+		# Notably, the entry file must exist on the file system
+		# as well as the &key within the index.
 		"""
 
 		path = self.addressing(key)
@@ -380,9 +380,9 @@ class Dictionary(collections.Mapping):
 
 	def refresh(self, route):
 		"""
-		Refresh the index for the given route.
+		# Refresh the index for the given route.
 
-		Used when there is suspicion of concurrent writes to a bucket index.
+		# Used when there is suspicion of concurrent writes to a bucket index.
 		"""
 
 		idx = self._index(route)
@@ -391,30 +391,31 @@ class Dictionary(collections.Mapping):
 
 	def allocate(self, keys, filename=str):
 		"""
-		Allocate a set of keys and return a mapping of their corresponding entries.
+		# Allocate a set of keys and return a mapping of their corresponding entries.
 
 		#!/pl/python
-
 			fsd.allocate([(b'/file-1', b'/file-2')])
-			{b'/file-1': fault.routes.library.File(...),
-			 b'/file-2': fault.routes.library.File(...)}
+			m = {
+				b'/file-1': fault.routes.library.File(...),
+				b'/file-2': fault.routes.library.File(...)
+			}
 
-		The routes are fully initialized; entries exist in the index,
-		and the route points to an initialized file.
+		# The routes are fully initialized; entries exist in the index,
+		# and the route points to an initialized file.
 		"""
 
 		return {k: self.route(key, filename=filename) for k in keys}
 
 	def usage(self):
 		"""
-		Calculate the stored memory usage of the resources.
+		# Calculate the stored memory usage of the resources.
 		"""
 
 		return self.directory.usage()
 
 	def route(self, key, filename=str):
 		"""
-		Return the route to the file of the given key.
+		# Return the route to the file of the given key.
 		"""
 
 		path = self.addressing(key)
@@ -435,10 +436,10 @@ class Dictionary(collections.Mapping):
 
 	def subdictionary(self, key, addressing = None):
 		"""
-		Create or open a &Dictionary instance at the given key.
+		# Create or open a &Dictionary instance at the given key.
 
-		The addressing (hash and depth) of the subdictionary is
-		consistent with the container's.
+		# The addressing (hash and depth) of the subdictionary is
+		# consistent with the container's.
 		"""
 
 		r = self.route(key)
@@ -449,7 +450,7 @@ class Dictionary(collections.Mapping):
 
 	def __setitem__(self, key, value):
 		"""
-		Store the given data, &value, using the &key.
+		# Store the given data, &value, using the &key.
 		"""
 
 		with self.route(key).open('wb') as f:
@@ -457,7 +458,7 @@ class Dictionary(collections.Mapping):
 
 	def __getitem__(self, key):
 		"""
-		Get the data stored using the give &key. &KeyError if it does not exist.
+		# Get the data stored using the give &key. &KeyError if it does not exist.
 		"""
 
 		if not self.has_key(key):
@@ -487,7 +488,7 @@ class Dictionary(collections.Mapping):
 
 	def __delitem__(self, key):
 		"""
-		Delete the file associated with the key.
+		# Delete the file associated with the key.
 		"""
 
 		if self.has_key(key):
@@ -497,7 +498,7 @@ class Dictionary(collections.Mapping):
 
 	def clear(self):
 		"""
-		Remove the entire directory and create a new one with the same configuration.
+		# Remove the entire directory and create a new one with the same configuration.
 		"""
 
 		self.directory.void()
@@ -511,11 +512,11 @@ class Dictionary(collections.Mapping):
 
 	def merge(self, source):
 		"""
-		Not Implemented.
+		# Not Implemented.
 
-		Merge the &source Dictionary into the hash managed by &self.
-		Merge is fundamental to implementing transactions: A separate hash directory
-		is created to represent a transaction and all writes are made to that
-		temporary directory.
+		# Merge the &source Dictionary into the hash managed by &self.
+		# Merge is fundamental to implementing transactions: A separate hash directory
+		# is created to represent a transaction and all writes are made to that
+		# temporary directory.
 		"""
 		raise NotImplementedError("merge")

@@ -1,5 +1,5 @@
 """
-Cat a series of entries from a given hash directory.
+# Cat a series of entries from a given hash directory.
 """
 from .. import library as libfs
 from ...routes import library as libroutes

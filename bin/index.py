@@ -1,5 +1,5 @@
 """
-Emit a newline separated list of keys contained in the hash to standard output.
+# Emit a newline separated list of keys contained in the hash to standard output.
 """
 import itertools
 from .. import library

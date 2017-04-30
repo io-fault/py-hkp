@@ -9,7 +9,7 @@ import hashlib
 import functools
 import collections
 
-from ..computation import libhash
+from ..computation import library as libc
 from ..routes import library as libroutes
 
 class Hash(object):
@@ -54,7 +54,7 @@ class Hash(object):
 		self.depth = depth
 
 		try:
-			self.implementation = libhash.reference(algorithm)
+			self.implementation = libc.Hash.reference(algorithm)
 		except ImportError:
 			self.implementation = hashlib.__dict__[algorithm]
 

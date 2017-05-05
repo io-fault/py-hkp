@@ -1,9 +1,9 @@
-identity = 'http://fault.io/python/filesystem'
+identity = 'http://fault.io/src/fault.filesystem'
 name = 'filesystem'
-abstract = 'Storage abstractions for managing filesystem based dictionaries and streams'
+abstract = 'Storage abstractions for managing filesystem based dictionaries'
 icon = '💾'
 
-fork = 'lattice' # Explicit branch name and a codename for the major version of the project.
+fork = 'hashed'
 versioning = 'continuous'
 status = 'flux'
 

@@ -1,5 +1,5 @@
 """
-# Storage abstractions for finite maps and permanent event streams.
+# Provides a dictionary interface for storing files using arbitrary keys.
 
 # The storage abstractions do not provide any guarantees for concurrent
 # access. Applications must identify the necessary exclusion constraints.

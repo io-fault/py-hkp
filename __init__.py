@@ -1,14 +1,5 @@
 """
-# filesystem provides a set of storage abstractions for applications with
-# more complicated needs than what can be satisfied by the base file system.
-
-# Storage Abstractions:
-
-	# /hash
-		# Hash based file addressing for complex storage keys.
-
-	# /flow
-		# Event stream segmentation for managing the archival process
-		# of a window's past events. (Similar to log file rotation)
+# Abstraction for the storage and retrieval of files using complex keys.
+# Currently, only a hash-based solution is implemented.
 """
 __factor_type__ = 'project'

@@ -117,6 +117,29 @@ def test_Dictionary_keys(test):
 
 		test/set(d.keys()) == {b"key1",b"key2",b"key3",b"key4"}
 
+def test_Dictionary_delete(test):
+	with library.libroutes.File.temporary() as tmp:
+		fsd1 = (tmp / 'd1').fullpath
+
+		d = library.Dictionary.create(library.Hash(), fsd1)
+
+		d[b"key2"] = b"value2"
+		d[b"key4"] = b"value4"
+		test/set(d.keys()) == {b"key2", b"key4"}
+
+		test/d.has_key(b"key2") == True
+		del d[b"key2"]
+		test/d.has_key(b"key2") == False
+		test/d.has_key(b"key2") == False
+		test/KeyError ^ (lambda: d[b"key2"])
+
+		def repeat():
+			# delitem on freshly removed key
+			del d[b"key2"]
+		test/KeyError ^ repeat
+
+		test/set(d.keys()) == {b"key4"}
+
 if __name__ == '__main__':
 	from ...development import libtest
 	import sys; libtest.execute(sys.modules['__main__'])

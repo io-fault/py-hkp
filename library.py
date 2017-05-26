@@ -491,8 +491,28 @@ class Dictionary(collections.Mapping):
 		# Delete the file associated with the key.
 		"""
 
-		if self.has_key(key):
-			self.route(key).void()
+		# Get bucket.
+		path = self.addressing(key)
+		r = self.directory.extend(path)
+		ir = r / 'index'
+		if not ir.exists():
+			raise KeyError(key)
+
+		# Resolve entry from bucket.
+		idx = self._index(ir)
+		if not idx.has_key(key):
+			raise KeyError(key)
+
+		# Remove key from index.
+		entry = idx[key]
+		idx.delete(key)
+		with ir.open('wb') as f:
+			idx.store(f.write)
+
+		# Remove file.
+		er = r / entry
+		if er.exists():
+			er.void()
 		else:
 			raise KeyError(key)
 

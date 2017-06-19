@@ -273,7 +273,7 @@ class Dictionary(collections.Mapping):
 		"""
 		# Create or Open a filesystem &Dictionary at the given &route.
 		"""
-		if route.exists():
+		if route.exists() and (route / 'hash').exists():
 			return Class.open(str(route))
 		else:
 			return Class.create(addressing or Hash('fnv1a_64'), str(route))

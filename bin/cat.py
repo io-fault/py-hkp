@@ -11,7 +11,10 @@ def main(output, args, readsize=1024*4):
 	write = output.write
 
 	for x in keys:
-		r = d.route(x.encode('utf-8', 'surrogateescape'))
+		k = x.encode('utf-8', 'surrogateescape')
+		if not d.has_key(k):
+			continue
+		r = d.route(k)
 		with r.open('rb') as f:
 			rs = readsize
 			read = f.read

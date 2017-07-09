@@ -3,6 +3,15 @@
 
 # The storage abstractions do not provide any guarantees for concurrent
 # access. Applications must identify the necessary exclusion constraints.
+
+# [ Engineering ]
+
+# Relocate the hash Dictionary to a local hash module and libroutes.File
+# into here.
+
+# Hash will need to import &.library, so any &.library based access will
+# need to be through a function to avoid a cycle. However, `libfs.open()`
+# seemed like a reasonable interface anyways.
 """
 
 import hashlib
@@ -540,3 +549,19 @@ class Dictionary(collections.Mapping):
 		# temporary directory.
 		"""
 		raise NotImplementedError("merge")
+
+class Protocol(object):
+	"""
+	# A definition of a filesystem protocol.
+
+	# Instances of a Protocol represent
+
+	# [ Properties ]
+	# /route
+		# /&libroutes.File
+			# The route to the directory that is an instance of the Protocol.
+			# Initialized by the constructor.
+	"""
+
+	def __init__(self, route):
+		self.route = route

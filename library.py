@@ -217,7 +217,7 @@ class Dictionary(collections.Mapping):
 	# The &allocate method is the primary interface as &Dictionary objects
 	# are intended for file storage; large binary objects.
 
-	# [Properties]
+	# [ Properties ]
 
 	# /addressing
 		# The address resolution method. Usually a &Hash instance.
@@ -557,6 +557,7 @@ class Protocol(object):
 	# Instances of a Protocol represent
 
 	# [ Properties ]
+
 	# /route
 		# /&libroutes.File
 			# The route to the directory that is an instance of the Protocol.
@@ -565,3 +566,9 @@ class Protocol(object):
 
 	def __init__(self, route):
 		self.route = route
+
+	def void(self):
+		"""
+		# Destroy the instance of the protocol on the file system.
+		"""
+		self.route.void()

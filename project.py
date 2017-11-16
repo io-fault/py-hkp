@@ -1,4 +1,4 @@
-identity = 'http://fault.io/src/fault.filesystem'
+identity = 'http://fault.io/src/python/filesystem'
 name = 'filesystem'
 abstract = 'Storage abstractions for managing filesystem based dictionaries'
 icon = '💾'

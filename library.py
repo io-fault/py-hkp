@@ -3,15 +3,6 @@
 
 # The storage abstractions do not provide any guarantees for concurrent
 # access. Applications must identify the necessary exclusion constraints.
-
-# [ Engineering ]
-
-# Relocate the hash Dictionary to a local hash module and libroutes.File
-# into here.
-
-# Hash will need to import &.library, so any &.library based access will
-# need to be through a function to avoid a cycle. However, `libfs.open()`
-# seemed like a reasonable interface anyways.
 """
 
 import hashlib
@@ -223,7 +214,7 @@ class Dictionary(collections.Mapping):
 		# The address resolution method. Usually a &Hash instance.
 
 	# /directory
-		# The &libroutes.File instance selecting the directory that the addresses
+		# The &libroutes.Route instance selecting the directory that the addresses
 		# exists within.
 	"""
 
@@ -240,7 +231,7 @@ class Dictionary(collections.Mapping):
 		"""
 		# Create the Dictionary directory and initialize its configuration.
 
-		# [Parameters]
+		# [ Parameters ]
 
 		# /addressing
 			# A &Hash instance describing the to use.
@@ -259,7 +250,7 @@ class Dictionary(collections.Mapping):
 		"""
 		# Open a filesystem based dictionary at the given directory.
 
-		# [Parameters]
+		# [ Parameters ]
 
 		# /directory
 			# An absolute path to the storage location.
@@ -278,7 +269,7 @@ class Dictionary(collections.Mapping):
 		return Class(addressing, r)
 
 	@classmethod
-	def use(Class, route:libroutes.File, addressing=None):
+	def use(Class, route:libroutes.Route, addressing=None):
 		"""
 		# Create or Open a filesystem &Dictionary at the given &route.
 		"""
@@ -287,7 +278,7 @@ class Dictionary(collections.Mapping):
 		else:
 			return Class.create(addressing or Hash('fnv1a_64'), str(route))
 
-	def __init__(self, addressing:Hash, directory:libroutes.File):
+	def __init__(self, addressing:Hash, directory:libroutes.Route):
 		self.addressing = addressing
 		self.directory = directory
 
@@ -323,7 +314,7 @@ class Dictionary(collections.Mapping):
 		"""
 		yield from (self[k] for k in self.keys())
 
-	def references(self) -> [(bytes, libroutes.File)]:
+	def references(self) -> [(bytes, libroutes.Route)]:
 		"""
 		# Returns an iterator to all the keys and their associated routes.
 		"""
@@ -559,7 +550,7 @@ class Protocol(object):
 	# [ Properties ]
 
 	# /route
-		# /&libroutes.File
+		# /&libroutes.Route
 			# The route to the directory that is an instance of the Protocol.
 			# Initialized by the constructor.
 	"""

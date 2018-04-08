@@ -15,8 +15,10 @@ from ..routes import library as libroutes
 class Hash(object):
 	"""
 	# Hash algorithm manager providing access to the divided hash of a key.
-	# The divided hash is used to construct the route to the actual data file
+	# The divided hash is used to construct the route (path) to the actual data file
 	# and the index of the bucket.
+
+	# Hash instances are used to manage address resolution for &Dictionary objects.
 	"""
 
 	@staticmethod

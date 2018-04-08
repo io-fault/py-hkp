@@ -145,5 +145,5 @@ def test_Dictionary_delete(test):
 		test/set(d.keys()) == {b"key4"}
 
 if __name__ == '__main__':
-	from ...development import libtest
+	from ...test import library as libtest
 	import sys; libtest.execute(sys.modules['__main__'])

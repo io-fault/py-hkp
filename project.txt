@@ -1,0 +1,17 @@
+/source/
+	`http://fault.io/src/python/filesystem`
+/name/
+	`filesystem`
+/abstract/
+	Storage abstractions for managing filesystem based dictionaries
+/icon/
+	- (emoji)`💾`
+/versioning/
+	continuous
+/status/
+	flux
+/controller/
+	`fault.io`
+/contact/
+	`http://fault.io/critical`
+

@@ -1,15 +1,21 @@
-/source/
-	`http://fault.io/src/python/filesystem`
+! CONTEXT:
+	/protocol/
+		&<http://if.fault.io/project>
+
+/identifier/
+	`http://fault.io/python/filesystem`
 /name/
 	`filesystem`
 /abstract/
 	Storage abstractions for managing filesystem based dictionaries
 /icon/
 	- (emoji)`💾`
+
 /versioning/
 	continuous
 /status/
 	flux
+
 /controller/
 	`fault.io`
 /contact/

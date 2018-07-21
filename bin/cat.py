@@ -2,11 +2,11 @@
 # Cat a series of entries from a given hash directory.
 """
 from .. import library as libfs
-from ...routes import library as libroutes
+from ...system import files
 
 def main(output, args, readsize=1024*4):
 	directory, *keys = args
-	directory = libroutes.File.from_path(directory).fullpath
+	directory = files.Path.from_path(directory).fullpath
 	d = libfs.Dictionary.open(directory)
 	write = output.write
 

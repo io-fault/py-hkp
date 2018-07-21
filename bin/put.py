@@ -2,11 +2,12 @@
 # Put the data given to standard input into the filesystem dictionary.
 """
 from .. import library
-from ...routes import library as routeslib
+
+from ...system import files
 
 def main(input, args, readsize=1024*4):
 	directory, key = args
-	directory = routeslib.File.from_path(directory).fullpath
+	directory = files.Path.from_path(directory).fullpath
 	d = library.Dictionary.open(directory)
 	read = input.read
 

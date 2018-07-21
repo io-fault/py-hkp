@@ -4,10 +4,11 @@
 # The storage abstractions do not provide any guarantees for concurrent
 # access. Applications must identify the necessary exclusion constraints.
 """
-
 import hashlib
 import functools
 import collections
+
+from ..system import files
 
 from ..computation import library as libc
 from ..routes import library as libroutes
@@ -212,10 +213,10 @@ class Dictionary(collections.Mapping):
 
 	# [ Properties ]
 
-	# /addressing
+	# /addressing/
 		# The address resolution method. Usually a &Hash instance.
 
-	# /directory
+	# /directory/
 		# The &libroutes.Route instance selecting the directory that the addresses
 		# exists within.
 	"""
@@ -235,13 +236,13 @@ class Dictionary(collections.Mapping):
 
 		# [ Parameters ]
 
-		# /addressing
+		# /addressing/
 			# A &Hash instance describing the to use.
-		# /directory
+		# /directory/
 			# The absolute path to the storage location.
 		"""
 
-		r = libroutes.File.from_path(directory)
+		r = files.Path.from_path(directory)
 		a = addressing
 		Class._init(a, r)
 
@@ -254,11 +255,11 @@ class Dictionary(collections.Mapping):
 
 		# [ Parameters ]
 
-		# /directory
+		# /directory/
 			# An absolute path to the storage location.
 		"""
 
-		r = libroutes.File.from_path(directory)
+		r = files.Path.from_path(directory)
 		config = (r / 'hash').load().decode('ascii')
 
 		algorithm, divisions, *length = config.strip().split(' ', 3) # expecting two fields
@@ -551,8 +552,8 @@ class Protocol(object):
 
 	# [ Properties ]
 
-	# /route
-		# /&libroutes.Route
+	# /route/
+		# /&libroutes.Route/
 			# The route to the directory that is an instance of the Protocol.
 			# Initialized by the constructor.
 	"""

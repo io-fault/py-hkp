@@ -2,13 +2,15 @@
 # Emit a newline separated list of keys contained in the hash to standard output.
 """
 import itertools
+
+from ...system import files
+
 from .. import library
-from ...routes import library as libroutes
 
 def main(output, args, str=str):
 	write = output.write
 	directory, *typ = args
-	directory = libroutes.File.from_path(directory).fullpath
+	directory = files.Path.from_path(directory).fullpath
 	d = library.Dictionary.open(directory)
 
 	if typ and typ[0] == 'xml':

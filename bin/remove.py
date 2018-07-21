@@ -2,10 +2,10 @@
 # Remove the given keys from the selected file system dictionary.
 """
 from .. import library as libfs
-from ...routes import library as libroutes
+from ...system import files
 
 def main(dirpath, keys):
-	directory = libroutes.File.from_path(dirpath).fullpath
+	directory = files.Path.from_path(dirpath).fullpath
 	d = libfs.Dictionary.open(directory)
 
 	for k in keys:

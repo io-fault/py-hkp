@@ -3,11 +3,11 @@
 		&<http://if.fault.io/project/information>
 
 /identifier/
-	`http://fault.io/python/filesystem`
+	`http://fault.io/python/hkp`
 /name/
-	`filesystem`
+	`hkp`
 /abstract/
-	Storage abstractions for managing filesystem based dictionaries
+	Hashed-Key Path based Storage tools.
 /icon/
 	- (emoji)`💾`
 

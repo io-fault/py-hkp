@@ -399,8 +399,8 @@ class Dictionary(collections.Mapping):
 		#!/pl/python
 			fsd.allocate([(b'/file-1', b'/file-2')])
 			m = {
-				b'/file-1': fault.routes.library.File(...),
-				b'/file-2': fault.routes.library.File(...)
+				b'/file-1': fault.system.files.Path(...),
+				b'/file-2': fault.system.files.Path(...)
 			}
 
 		# The routes are fully initialized; entries exist in the index,

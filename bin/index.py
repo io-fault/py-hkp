@@ -13,24 +13,8 @@ def main(output, args, str=str):
 	directory = files.Path.from_path(directory).fullpath
 	d = library.Dictionary.open(directory)
 
-	if typ and typ[0] == 'xml':
-		# Expose this outside of the binary.
-		from ...xml import library as libxml
-		content = libxml.element('map',
-			itertools.chain.from_iterable(
-				libxml.element('item',
-					libxml.escape_element_string(str(r)),
-					('key', k.decode('utf-8'))
-				)
-				for k, r in d.references()
-			),
-			('dictionary', directory),
-			('xmlns', 'http://fault.io/xml/filesystem#index'),
-		)
-		sep = b''
-	else:
-		content = d.keys()
-		sep = b'\n'
+	content = d.keys()
+	sep = b'\n'
 
 	write(sep.join(content))
 

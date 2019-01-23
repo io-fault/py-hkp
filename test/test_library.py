@@ -1,9 +1,5 @@
 from .. import library
 
-def test_Protocol_presence(test):
-	test/library.Protocol / type
-	test/library.Protocol(None).route == None
-
 def test_Index_structure(test):
 	s1 = [
 		b'entry\n',

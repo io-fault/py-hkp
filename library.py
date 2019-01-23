@@ -543,26 +543,3 @@ class Dictionary(collections.Mapping):
 		# temporary directory.
 		"""
 		raise NotImplementedError("merge")
-
-class Protocol(object):
-	"""
-	# A definition of a filesystem protocol.
-
-	# Instances of a Protocol represent
-
-	# [ Properties ]
-
-	# /route/
-		# /&libroutes.Route/
-			# The route to the directory that is an instance of the Protocol.
-			# Initialized by the constructor.
-	"""
-
-	def __init__(self, route):
-		self.route = route
-
-	def void(self):
-		"""
-		# Destroy the instance of the protocol on the file system.
-		"""
-		self.route.void()

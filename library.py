@@ -11,7 +11,7 @@ import collections
 from ..system import files
 
 from ..computation import library as libc
-from ..routes import library as libroutes
+from ..routes import types as routes
 
 class Hash(object):
 	"""
@@ -217,7 +217,7 @@ class Dictionary(collections.Mapping):
 		# The address resolution method. Usually a &Hash instance.
 
 	# /directory/
-		# The &libroutes.Route instance selecting the directory that the addresses
+		# The &routes.Selector instance selecting the directory that the addresses
 		# exists within.
 	"""
 
@@ -272,7 +272,7 @@ class Dictionary(collections.Mapping):
 		return Class(addressing, r)
 
 	@classmethod
-	def use(Class, route:libroutes.Route, addressing=None):
+	def use(Class, route:routes.Selector, addressing=None):
 		"""
 		# Create or Open a filesystem &Dictionary at the given &route.
 		"""
@@ -281,7 +281,7 @@ class Dictionary(collections.Mapping):
 		else:
 			return Class.create(addressing or Hash('fnv1a_64'), str(route))
 
-	def __init__(self, addressing:Hash, directory:libroutes.Route):
+	def __init__(self, addressing:Hash, directory:routes.Selector):
 		self.addressing = addressing
 		self.directory = directory
 
@@ -317,7 +317,7 @@ class Dictionary(collections.Mapping):
 		"""
 		yield from (self[k] for k in self.keys())
 
-	def references(self) -> [(bytes, libroutes.Route)]:
+	def references(self) -> [(bytes, routes.Selector)]:
 		"""
 		# Returns an iterator to all the keys and their associated routes.
 		"""

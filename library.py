@@ -6,7 +6,7 @@
 """
 import hashlib
 import functools
-import collections
+import collections.abc
 
 from ..system import files
 
@@ -137,7 +137,7 @@ class Index(object):
 		self._state = list(i)
 		self._map = dict([(k, v.decode('utf-8')) for k, v in self._state])
 
-	def store(self, write:collections.Callable,
+	def store(self, write:collections.abc.Callable,
 			indent = lambda x: b''.join((b'\t', b'\n\t'.join(x.split(b'\n')), b'\n'))
 		):
 		"""
@@ -199,7 +199,7 @@ class Index(object):
 		entry = self._map.pop(key)
 		return entry
 
-class Dictionary(collections.Mapping):
+class Dictionary(collections.abc.Mapping):
 	"""
 	# Filesystem based dictionary for large values.
 

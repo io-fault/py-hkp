@@ -9,9 +9,32 @@ import functools
 import collections.abc
 
 from ..system import files
-
-from ..computation import library as libc
 from ..routes import types as routes
+
+class FNV(object):
+	"""
+	# Temporary location for simple hash implementation.
+	"""
+	@classmethod
+	def compute(Class, data:bytes):
+		c=Class()
+		c.update(data)
+		return c
+
+	def __init__(self, I=0xcbf29ce484222325):
+		self.state = I
+
+	def update(self, data:bytes, P=0x100000001b3, I=0xcbf29ce484222325, C=(2**64)-1):
+		s = self.state
+		for x in data:
+			s ^= x
+			s *= P
+		self.state = s & C
+
+		return self
+
+	def hexdigest(self):
+		return hex(self.state)[2:]
 
 class Hash(object):
 	"""
@@ -56,9 +79,9 @@ class Hash(object):
 		self.algorithm = algorithm
 		self.depth = depth
 
-		try:
-			self.implementation = libc.Hash.reference(algorithm)
-		except ImportError:
+		if algorithm == 'fnv1a_64':
+			self.implementation = FNV.compute
+		else:
 			self.implementation = hashlib.__dict__[algorithm]
 
 		# calculate if not specified.

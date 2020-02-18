@@ -9,7 +9,7 @@ import functools
 import collections.abc
 
 from ..system import files
-from ..routes import types as routes
+from .. import routes
 
 class FNV(object):
 	"""
@@ -370,7 +370,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 
 		path = self.addressing(key)
-		r = self.directory.extend(path)
+		r = self.directory + path
 		ir = r / 'index'
 		if not ir.exists():
 			return False
@@ -445,7 +445,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 
 		path = self.addressing(key)
-		r = self.directory.extend(path)
+		r = self.directory + path
 
 		ir = r / 'index'
 		if not ir.exists():
@@ -519,7 +519,7 @@ class Dictionary(collections.abc.Mapping):
 
 		# Get bucket.
 		path = self.addressing(key)
-		r = self.directory.extend(path)
+		r = self.directory + path
 		ir = r / 'index'
 		if not ir.exists():
 			raise KeyError(key)

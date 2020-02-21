@@ -247,10 +247,10 @@ class Dictionary(collections.abc.Mapping):
 	@staticmethod
 	def _init(a, d):
 		# Initialize the directory and create the hash configuration file.
-		d.init('directory')
+		d.fs_mkdir()
 		h = d / 'hash'
 		data = "%s %s %s\n" %(a.algorithm, a.depth, a.length)
-		h.store(data.encode('ascii'))
+		h.fs_store(data.encode('ascii'))
 
 	@classmethod
 	def create(Class, addressing:Hash, directory:str) -> "Dictionary":
@@ -283,7 +283,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 
 		r = files.Path.from_path(directory)
-		config = (r / 'hash').load().decode('ascii')
+		config = (r / 'hash').fs_load().decode('ascii')
 
 		algorithm, divisions, *length = config.strip().split(' ', 3) # expecting two fields
 		if not length or length[0] == 'None':
@@ -399,7 +399,7 @@ class Dictionary(collections.abc.Mapping):
 	def _index(self, route):
 		idx = Index()
 
-		with route.open('rb') as f:
+		with route.fs_open('rb') as f:
 			idx.load(f.readlines())
 
 		return idx
@@ -412,7 +412,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 
 		idx = self._index(route)
-		with route.open('rb') as f:
+		with route.fs_open('rb') as f:
 			idx.load(f.readlines())
 
 	def allocate(self, keys, filename=str):
@@ -448,14 +448,13 @@ class Dictionary(collections.abc.Mapping):
 		r = self.directory + path
 
 		ir = r / 'index'
-		if not ir.exists():
-			ir.init('file')
+		ir.fs_init()
 
 		# update the index
 		idx = self._index(ir)
 
 		entry = idx.allocate((key,), filename=filename)[0]
-		with ir.open('wb') as f:
+		with ir.fs_open('wb') as f:
 			idx.store(f.write)
 
 		return r / entry
@@ -469,8 +468,8 @@ class Dictionary(collections.abc.Mapping):
 		"""
 
 		r = self.route(key)
-		if not r.exists():
-			r.init("directory")
+		if r.fs_type() == 'void':
+			r.fs_mkdir()
 
 		return self.__class__(addressing or self.addressing, r)
 
@@ -479,8 +478,7 @@ class Dictionary(collections.abc.Mapping):
 		# Store the given data, &value, using the &key.
 		"""
 
-		with self.route(key).open('wb') as f:
-			f.write(value)
+		self.route(key).fs_store(value)
 
 	def __getitem__(self, key):
 		"""
@@ -490,15 +488,13 @@ class Dictionary(collections.abc.Mapping):
 		if not self.has_key(key):
 			raise KeyError(key)
 
-		with self.route(key).open('rb') as f:
-			return f.read()
+		return self.route(key).fs_load()
 
 	def get(self, key, fallback=None):
 		if not self.has_key(key):
 			return fallback
 
-		with self.route(key).open('rb') as f:
-			return f.read()
+		return self.route(key).fs_load()
 
 	def pop(self, key, *fallback):
 		if not self.has_key(key):
@@ -521,7 +517,7 @@ class Dictionary(collections.abc.Mapping):
 		path = self.addressing(key)
 		r = self.directory + path
 		ir = r / 'index'
-		if not ir.exists():
+		if ir.fs_type() == 'void':
 			raise KeyError(key)
 
 		# Resolve entry from bucket.
@@ -532,13 +528,13 @@ class Dictionary(collections.abc.Mapping):
 		# Remove key from index.
 		entry = idx[key]
 		idx.delete(key)
-		with ir.open('wb') as f:
+		with ir.fs_open('wb') as f:
 			idx.store(f.write)
 
 		# Remove file.
 		er = r / entry
-		if er.exists():
-			er.void()
+		if er.fs_type() != 'void':
+			er.fs_void()
 		else:
 			raise KeyError(key)
 
@@ -547,13 +543,13 @@ class Dictionary(collections.abc.Mapping):
 		# Remove the entire directory and create a new one with the same configuration.
 		"""
 
-		self.directory.void()
+		self.directory.fs_void()
 		self._init(self.addressing, self.directory)
 
 	def update(self, iterable):
 		for k, v in iterable:
 			r = self.route(k)
-			with r.open('wb') as f:
+			with r.fs_open('wb') as f:
 				f.write(v)
 
 	def merge(self, source):

@@ -15,7 +15,7 @@ def main(output, args, readsize=1024*4):
 		if not d.has_key(k):
 			continue
 		r = d.route(k)
-		with r.open('rb') as f:
+		with r.fs_open('rb') as f:
 			rs = readsize
 			read = f.read
 			while rs == readsize:

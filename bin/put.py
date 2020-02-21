@@ -12,7 +12,7 @@ def main(input, args, readsize=1024*4):
 	read = input.read
 
 	r = d.route(key.encode('utf-8', 'surrogateescape'))
-	with r.open('wb') as f:
+	with r.fs_open('wb') as f:
 		rs = readsize
 		write = f.write
 		while rs == readsize:

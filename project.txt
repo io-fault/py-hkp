@@ -11,13 +11,7 @@
 /icon/
 	- (emoji)`💾`
 
-/versioning/
-	continuous
-/status/
-	volatile
-
 /controller/
 	`fault.io`
 /contact/
 	`http://fault.io/critical`
-

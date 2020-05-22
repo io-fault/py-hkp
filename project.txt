@@ -3,15 +3,15 @@
 		&<http://if.fault.io/project/information>
 
 /identifier/
-	`http://fault.io/python/hkp`
+	&<http://fault.io/python/hkp>
+/icon/
+	- (emoji)`💾`
 /name/
 	`hkp`
 /abstract/
 	Hashed-Key Path based Storage tools.
-/icon/
-	- (emoji)`💾`
 
-/controller/
+/authority/
 	`fault.io`
 /contact/
-	`http://fault.io/critical`
+	&<http://fault.io/critical>

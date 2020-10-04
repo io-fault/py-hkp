@@ -86,7 +86,7 @@ def dictionary_operations(test, d):
 	test/KeyError ^ (lambda: d.__delitem__(b'nosuchkey'))
 
 def test_Dictionary(test):
-	with library.files.Path.temporary() as tmp:
+	with library.files.Path.fs_tmpdir() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 		fsd2 = (tmp / 'd2').fullpath
 
@@ -94,7 +94,7 @@ def test_Dictionary(test):
 		dictionary_operations(test, d)
 
 def test_Dictionary_subdictionary(test):
-	with library.files.Path.temporary() as tmp:
+	with library.files.Path.fs_tmpdir() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 
 		d = library.Dictionary.create(library.Hash(), fsd1)
@@ -105,7 +105,7 @@ def test_Dictionary_subdictionary(test):
 		dictionary_operations(test, s2)
 
 def test_Dictionary_keys(test):
-	with library.files.Path.temporary() as tmp:
+	with library.files.Path.fs_tmpdir() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 
 		d = library.Dictionary.create(library.Hash(), fsd1)
@@ -118,7 +118,7 @@ def test_Dictionary_keys(test):
 		test/set(d.keys()) == {b"key1",b"key2",b"key3",b"key4"}
 
 def test_Dictionary_delete(test):
-	with library.files.Path.temporary() as tmp:
+	with library.files.Path.fs_tmpdir() as tmp:
 		fsd1 = (tmp / 'd1').fullpath
 
 		d = library.Dictionary.create(library.Hash(), fsd1)

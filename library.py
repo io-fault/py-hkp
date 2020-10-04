@@ -299,7 +299,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 		# Create or Open a filesystem &Dictionary at the given &route.
 		"""
-		if route.exists() and (route / 'hash').exists():
+		if {route.fs_type(), (route/'hash').fs_type()} != {'void'}:
 			return Class.open(str(route))
 		else:
 			return Class.create(addressing or Hash('fnv1a_64'), str(route))
@@ -319,10 +319,10 @@ class Dictionary(collections.abc.Mapping):
 		while q:
 			fsdir = q.pop(0)
 
-			nodes = fsdir.subnodes()
-			for x in nodes[0]:
+			dirs = fsdir.fs_list()[0]
+			for x in dirs:
 				idx_path = x / 'index'
-				if idx_path.exists():
+				if idx_path.fs_type() != 'void':
 					yield from self._index(idx_path).keys()
 				else:
 					# container, descend if &x/index does not exist.
@@ -349,10 +349,10 @@ class Dictionary(collections.abc.Mapping):
 		while q:
 			fsdir = q.pop(0)
 
-			nodes = fsdir.subnodes()
-			for x in nodes[0]:
+			dirs = fsdir.fs_list()[0]
+			for x in dirs:
 				idx_path = x / 'index'
-				if idx_path.exists():
+				if idx_path.fs_type() != 'void':
 					yield from (
 						(k, (x / v))
 						for k, v in self._index(idx_path).items()
@@ -372,14 +372,14 @@ class Dictionary(collections.abc.Mapping):
 		path = self.addressing(key)
 		r = self.directory + path
 		ir = r / 'index'
-		if not ir.exists():
+		if ir.fs_type() == 'void':
 			return False
 
 		idx = self._index(ir)
 		if idx.has_key(key):
 			entry = idx[key]
 			er = r / entry
-			if er.exists():
+			if er.fs_type() != 'void':
 				return True
 
 		return False

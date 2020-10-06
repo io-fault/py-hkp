@@ -9,7 +9,6 @@ import functools
 import collections.abc
 
 from ..system import files
-from .. import routes
 
 class FNV(object):
 	"""
@@ -240,7 +239,7 @@ class Dictionary(collections.abc.Mapping):
 		# The address resolution method. Usually a &Hash instance.
 
 	# /directory/
-		# The &routes.Selector instance selecting the directory that the addresses
+		# The &files.Path instance selecting the directory that the addresses
 		# exists within.
 	"""
 
@@ -295,7 +294,7 @@ class Dictionary(collections.abc.Mapping):
 		return Class(addressing, r)
 
 	@classmethod
-	def use(Class, route:routes.Selector, addressing=None):
+	def use(Class, route:files.Path, addressing=None):
 		"""
 		# Create or Open a filesystem &Dictionary at the given &route.
 		"""
@@ -304,7 +303,7 @@ class Dictionary(collections.abc.Mapping):
 		else:
 			return Class.create(addressing or Hash('fnv1a_64'), str(route))
 
-	def __init__(self, addressing:Hash, directory:routes.Selector):
+	def __init__(self, addressing:Hash, directory:files.Path):
 		self.addressing = addressing
 		self.directory = directory
 
@@ -340,7 +339,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 		yield from (self[k] for k in self.keys())
 
-	def references(self) -> [(bytes, routes.Selector)]:
+	def references(self) -> [(bytes, files.Path)]:
 		"""
 		# Returns an iterator to all the keys and their associated routes.
 		"""

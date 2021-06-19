@@ -1,4 +1,1 @@
-"""
-# Abstraction for the storage and retrieval of files using complex keys.
-# Currently, only a hash-based solution is implemented.
-"""
+# Project package module for supporting sys.path imports.

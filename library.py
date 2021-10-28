@@ -418,7 +418,7 @@ class Dictionary(collections.abc.Mapping):
 		"""
 		# Allocate a set of keys and return a mapping of their corresponding entries.
 
-		#!/pl/python
+		#!syntax/python
 			fsd.allocate([(b'/file-1', b'/file-2')])
 			m = {
 				b'/file-1': fault.system.files.Path(...),

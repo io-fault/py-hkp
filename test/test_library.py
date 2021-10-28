@@ -75,7 +75,7 @@ def dictionary_operations(test, d):
 
 	r = d.route(b'case')
 	test/d.has_key(b'case')
-	test/r.exists() == True
+	test/r.fs_type() == 'data'
 	del d[b'case']
 
 	test/d.has_key(b'case') == False
